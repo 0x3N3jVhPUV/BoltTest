@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { FolderTree, Youtube, Twitter, Rss, ChevronDown, ChevronRight, Trash2, Plus } from 'lucide-react';
+import { FolderTree, Youtube, Twitter, Rss, ChevronDown, ChevronRight, Trash2, Plus, Star } from 'lucide-react';
 
 interface SidebarProps {
   isOpen: boolean;
   onCategorySelect: (category: string) => void;
   selectedCategory: string;
+  onClose: () => void;
+  getThemeCount: (theme: string, isFavorite?: boolean) => number;
 }
 
 interface ThemeItem {
@@ -28,6 +30,51 @@ interface AddThemeModalProps {
   onConfirm: (themeName: string) => void;
   parentCategory: string;
 }
+
+const defaultThemes: ThemeItem[] = [
+  {
+    label: 'Plateformes',
+    icon: FolderTree,
+    children: [
+      {
+        label: 'Youtube',
+        icon: Youtube,
+        children: [
+          {
+            label: 'Thèmes',
+            children: [
+              { label: 'All', permanent: true },
+              { label: 'Ai' },
+              { label: 'Crypto' },
+              { label: 'Edu' }
+            ]
+          },
+          {
+            label: 'Favoris',
+            icon: Star,
+            children: [
+              { label: 'All', permanent: true }
+            ]
+          }
+        ]
+      },
+      {
+        label: 'Twitter',
+        icon: Twitter,
+        children: [
+          { label: 'Bientôt disponible', disabled: true, permanent: true }
+        ]
+      },
+      {
+        label: 'RSS',
+        icon: Rss,
+        children: [
+          { label: 'Bientôt disponible', disabled: true, permanent: true }
+        ]
+      }
+    ]
+  }
+];
 
 function DeleteModal({ isOpen, onClose, onConfirm, themeName }: DeleteModalProps) {
   if (!isOpen) return null;
@@ -121,8 +168,8 @@ function AddThemeModal({ isOpen, onClose, onConfirm, parentCategory }: AddThemeM
   );
 }
 
-export function Sidebar({ isOpen, onCategorySelect, selectedCategory }: SidebarProps) {
-  const [expandedItems, setExpandedItems] = useState<string[]>(['Thèmes', 'Youtube']);
+export function Sidebar({ isOpen, onCategorySelect, selectedCategory, onClose, getThemeCount }: SidebarProps) {
+  const [expandedItems, setExpandedItems] = useState<string[]>(['Plateformes', 'Youtube', 'Thèmes']);
   const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; theme: string }>({
     isOpen: false,
     theme: ''
@@ -131,38 +178,7 @@ export function Sidebar({ isOpen, onCategorySelect, selectedCategory }: SidebarP
     isOpen: false,
     parentCategory: ''
   });
-  const [themes, setThemes] = useState<ThemeItem[]>([
-    {
-      label: 'Thèmes',
-      icon: FolderTree,
-      children: [
-        {
-          label: 'Youtube',
-          icon: Youtube,
-          children: [
-            { label: 'All', permanent: true },
-            { label: 'Ai' },
-            { label: 'Crypto' },
-            { label: 'Edu' }
-          ]
-        },
-        {
-          label: 'Twitter',
-          icon: Twitter,
-          children: [
-            { label: 'Bientôt disponible', disabled: true, permanent: true }
-          ]
-        },
-        {
-          label: 'RSS',
-          icon: Rss,
-          children: [
-            { label: 'Bientôt disponible', disabled: true, permanent: true }
-          ]
-        }
-      ]
-    }
-  ]);
+  const [themes, setThemes] = useState<ThemeItem[]>(defaultThemes);
 
   const toggleExpand = (label: string) => {
     setExpandedItems(prev => 
@@ -177,6 +193,7 @@ export function Sidebar({ isOpen, onCategorySelect, selectedCategory }: SidebarP
     
     if (!item.children) {
       onCategorySelect(item.label);
+      onClose();
     } else {
       toggleExpand(item.label);
     }
@@ -192,7 +209,13 @@ export function Sidebar({ isOpen, onCategorySelect, selectedCategory }: SidebarP
       return items.map(item => ({
         ...item,
         children: item.children
-          ? item.children.filter(child => child.label !== deleteModal.theme)
+          ? item.children
+              .map(child => ({
+                ...child,
+                children: child.children
+                  ? child.children.filter(grandChild => grandChild.label !== deleteModal.theme)
+                  : undefined
+              }))
           : undefined
       }));
     };
@@ -210,15 +233,31 @@ export function Sidebar({ isOpen, onCategorySelect, selectedCategory }: SidebarP
     const addTheme = (items: ThemeItem[]): ThemeItem[] => {
       return items.map(item => {
         if (item.children) {
-          if (item.label === addModal.parentCategory) {
-            return {
-              ...item,
-              children: [...item.children, { label: themeName }]
-            };
-          }
           return {
             ...item,
-            children: addTheme(item.children)
+            children: item.children.map(child => {
+              if (child.label === addModal.parentCategory) {
+                return {
+                  ...child,
+                  children: [...(child.children || []), { label: themeName }]
+                };
+              }
+              if (child.children) {
+                return {
+                  ...child,
+                  children: child.children.map(grandChild => {
+                    if (grandChild.label === addModal.parentCategory) {
+                      return {
+                        ...grandChild,
+                        children: [...(grandChild.children || []), { label: themeName }]
+                      };
+                    }
+                    return grandChild;
+                  })
+                };
+              }
+              return child;
+            })
           };
         }
         return item;
@@ -229,13 +268,16 @@ export function Sidebar({ isOpen, onCategorySelect, selectedCategory }: SidebarP
     setAddModal({ isOpen: false, parentCategory: '' });
   };
 
-  const renderThemeItem = (item: ThemeItem, depth: number = 0) => {
+  const renderThemeItem = (item: ThemeItem, depth: number = 0, parentPath: string[] = []) => {
     const hasChildren = item.children && item.children.length > 0;
     const isExpanded = expandedItems.includes(item.label);
     const Icon = item.icon;
     const isSelected = item.label === selectedCategory;
-    const canDelete = !item.permanent && !item.disabled && depth === 2;
-    const canAddThemes = depth === 1 && !item.children?.some(child => child.label === 'Bientôt disponible');
+    const canDelete = !item.permanent && !item.disabled && depth === 3;
+    const canAddThemes = (item.label === 'Thèmes' || item.label === 'Favoris') && depth === 2;
+    const currentPath = [...parentPath, item.label];
+    const isFavorites = currentPath.includes('Favoris');
+    const showCount = !hasChildren && !item.disabled && item.label !== 'Bientôt disponible';
 
     return (
       <li key={item.label}>
@@ -245,7 +287,7 @@ export function Sidebar({ isOpen, onCategorySelect, selectedCategory }: SidebarP
             disabled={item.disabled}
             className={`
               w-full flex items-center gap-2 px-4 py-2 rounded-lg transition-colors duration-200
-              ${depth === 2 ? 'pl-12' : depth === 1 ? 'pl-8' : 'pl-4'}
+              ${depth === 3 ? 'pl-16' : depth === 2 ? 'pl-12' : depth === 1 ? 'pl-8' : 'pl-4'}
               ${item.disabled 
                 ? 'opacity-50 cursor-not-allowed text-gray-500 dark:text-gray-400' 
                 : isSelected 
@@ -255,15 +297,22 @@ export function Sidebar({ isOpen, onCategorySelect, selectedCategory }: SidebarP
               ${hasChildren ? 'font-medium' : ''}
             `}
           >
-            {hasChildren && (
-              isExpanded ? (
-                <ChevronDown className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-              ) : (
-                <ChevronRight className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-              )
+            <div className="flex items-center gap-2 flex-1">
+              {hasChildren && (
+                isExpanded ? (
+                  <ChevronDown className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                ) : (
+                  <ChevronRight className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                )
+              )}
+              {Icon && <Icon className="w-5 h-5" />}
+              <span>{item.label}</span>
+            </div>
+            {showCount && (
+              <span className="text-sm text-gray-500 dark:text-gray-400 mr-8">
+                {getThemeCount(item.label, isFavorites)}
+              </span>
             )}
-            {Icon && <Icon className="w-5 h-5" />}
-            <span>{item.label}</span>
           </button>
           {canDelete && (
             <button
@@ -284,7 +333,7 @@ export function Sidebar({ isOpen, onCategorySelect, selectedCategory }: SidebarP
         </div>
         {hasChildren && isExpanded && (
           <ul className="mt-1">
-            {item.children.map(child => renderThemeItem(child, depth + 1))}
+            {item.children.map(child => renderThemeItem(child, depth + 1, currentPath))}
           </ul>
         )}
       </li>
@@ -298,12 +347,13 @@ export function Sidebar({ isOpen, onCategorySelect, selectedCategory }: SidebarP
           fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 lg:hidden
           ${isOpen ? 'opacity-100 z-20' : 'opacity-0 pointer-events-none'}
         `}
+        onClick={onClose}
       />
 
       <aside 
         className={`
           fixed top-16 bottom-0 left-0 w-64 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300 ease-in-out z-30
-          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+          ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
       >
         <nav className="p-4">

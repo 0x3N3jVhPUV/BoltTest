@@ -10,4 +10,5 @@ export interface Video {
   summary: string;
   category: string;
   createdAt?: Date;
+  favorite_themes?: string[];
 }

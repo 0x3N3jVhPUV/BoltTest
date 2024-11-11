@@ -7,9 +7,18 @@ import { Pagination } from './Pagination';
 interface VideoListProps {
   videos: Video[];
   selectedCategory: string;
+  favoriteThemes: string[];
+  onAddToFavorites: (videoId: string, theme: string) => void;
+  onAddFavoriteTheme: (theme: string) => void;
 }
 
-export function VideoList({ videos, selectedCategory }: VideoListProps) {
+export function VideoList({ 
+  videos, 
+  selectedCategory,
+  favoriteThemes,
+  onAddToFavorites,
+  onAddFavoriteTheme 
+}: VideoListProps) {
   const [durationFilter, setDurationFilter] = useState('');
   const [dateFilter, setDateFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -21,7 +30,11 @@ export function VideoList({ videos, selectedCategory }: VideoListProps) {
 
       // Filter by category
       if (selectedCategory && selectedCategory !== 'All') {
-        passesFilters = passesFilters && video.category === selectedCategory;
+        if (favoriteThemes.includes(selectedCategory)) {
+          passesFilters = passesFilters && video.favorite_themes?.includes(selectedCategory);
+        } else {
+          passesFilters = passesFilters && video.category === selectedCategory;
+        }
       }
 
       // Duration filter
@@ -64,7 +77,7 @@ export function VideoList({ videos, selectedCategory }: VideoListProps) {
 
       return passesFilters;
     });
-  }, [videos, selectedCategory, durationFilter, dateFilter]);
+  }, [videos, selectedCategory, durationFilter, dateFilter, favoriteThemes]);
 
   const totalPages = Math.ceil(filteredVideos.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -83,7 +96,13 @@ export function VideoList({ videos, selectedCategory }: VideoListProps) {
       />
       
       {currentVideos.map((video, index) => (
-        <VideoCard key={video.id || index} video={video} />
+        <VideoCard 
+          key={video.id || index} 
+          video={video}
+          onAddToFavorites={onAddToFavorites}
+          favoriteThemes={favoriteThemes}
+          onAddFavoriteTheme={onAddFavoriteTheme}
+        />
       ))}
 
       {filteredVideos.length > 0 && (
