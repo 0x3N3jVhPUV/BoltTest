@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, User, LogIn, LogOut, Settings, ChevronDown, Moon, Sun, Skull } from 'lucide-react';
+import { Menu, User, LogIn, LogOut, Settings, ChevronDown, Moon, Sun, Pill } from 'lucide-react';
 import { useDarkMode } from '../../hooks/useDarkMode';
 
 interface HeaderProps {
@@ -36,8 +36,14 @@ export function Header({ onToggleSidebar, isSidebarOpen }: HeaderProps) {
             <Menu className={`w-6 h-6 dark:text-gray-200 transition-transform duration-200 ${isSidebarOpen ? 'rotate-90' : ''}`} />
           </button>
           <div className="flex items-center gap-2">
-            <Skull className="w-8 h-8 text-red-600 animate-pulse" />
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">F.O.M.O. Killer</h1>
+            <div className="relative w-8 h-8">
+              <Pill className="absolute inset-0 text-[#FF0000] animate-pulse" />
+              <Pill className="absolute inset-0 text-teal-600 animate-pulse [clip-path:inset(0_50%_0_0)]" />
+            </div>
+            <h1 className="text-xl font-bold">
+              <span className="text-[#FF0000] dark:text-[#FF3333]">F.O.M.O.</span>
+              <span className="text-teal-600 dark:text-teal-400"> Cure</span>
+            </h1>
           </div>
         </div>
 
@@ -61,7 +67,7 @@ export function Header({ onToggleSidebar, isSidebarOpen }: HeaderProps) {
                   onClick={toggleUserMenu}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
                 >
-                  <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-teal-500 flex items-center justify-center">
                     <User className="w-5 h-5 text-white" />
                   </div>
                   <span className="font-medium text-gray-700 dark:text-gray-200">John Doe</span>
@@ -90,7 +96,7 @@ export function Header({ onToggleSidebar, isSidebarOpen }: HeaderProps) {
             ) : (
               <button
                 onClick={handleLogin}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors duration-200"
               >
                 <LogIn className="w-5 h-5" />
                 Connexion

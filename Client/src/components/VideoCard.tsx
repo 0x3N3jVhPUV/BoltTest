@@ -39,11 +39,9 @@ export function VideoCard({ video }: VideoCardProps) {
   };
 
   const detectLanguage = (text: string): 'fr-FR' | 'en-US' => {
-    // Simple detection based on common French words
     const frenchWords = ['et', 'est', 'sont', 'dans', 'pour', 'avec', 'sur', 'les', 'des'];
     const textWords = text.toLowerCase().split(/\s+/);
     const frenchWordCount = textWords.filter(word => frenchWords.includes(word)).length;
-    
     return frenchWordCount > 2 ? 'fr-FR' : 'en-US';
   };
 
@@ -66,7 +64,6 @@ export function VideoCard({ video }: VideoCardProps) {
     setIsPlaying(true);
   };
 
-  // Cleanup on unmount
   React.useEffect(() => {
     return () => {
       if (isPlaying) {

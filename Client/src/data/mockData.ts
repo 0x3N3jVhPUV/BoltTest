@@ -2,6 +2,7 @@ import { Video } from '../types/video';
 
 export const mockVideos: Video[] = [
   {
+    category: "Crypto",
     video_id: "1QmVqw3pz5A",
     title: "CRYPTO FISCALITÉ - DON de 100,000€ POSSIBLE ? Alexandre LOURIMI avocat spécialisé vous répond",
     channel_name: "Enter The Crypto Matrix",
@@ -12,6 +13,7 @@ export const mockVideos: Video[] = [
     summary: "<strong>Résumé général et concis</strong><br><br>Dans ce live, Alexandre Lourrimi, avocat fiscaliste, discute des dernières lois et réglementations fiscales en matière de crypto-monnaies en France. Il aborde notamment les questions de donation, de cash-out, de transmission patrimoniale et de fiscalité sur les revenus du capital. Il souligne que les nouvelles lois visent à faciliter la transmission patrimoniale et à réduire le taux d'imposition pour les revenus du capital.<br><br><strong>Conseils et conclusions</strong><br><br>* Les nouvelles lois permettent de faire des dons de crypto-monnaies entre parents et enfants sans payer d'impôt si la somme dépassant 100 000 € est versée directement à l'enfant.<br>* Les cash-out de crypto-monnaies sont soumis à l'impôt sur les revenus du capital.<br>* La transmission patrimoniale est soumise à des règles spécifiques pour les donations et les héritages.<br>* Les contributions sur les hauts revenus et la taxe Puma sont applicable à des revenus supérieurs à 250 000 €.<br>* Il est recommandé de consulter un avocat fiscaliste pour obtenir des conseils personnalisés sur les donations et la transmission patrimoniale.<br><br><strong>Exemples concrets</strong><br><br>* Exemple de donation entre parents et enfants : 100 000 € peut être donné entre ascendant et descendant sans payer d'impôt si la somme est versée directement à l'enfant.<br>* Exemple de cash-out : si vous achetez 10 000 € de crypto et que son prix total d'achat est de 100 000 €, vous pouvez déclarer une plus-value de 90 000 €.<br>* Exemple de transmission patrimoniale : si vous faites un don d'assurance vie à votre enfant, vous pouvez profiter d'une exonération fiscale si vous le faites avant la fin de l'année civile.<br><br><strong>Conclusion</strong><br><br>Les nouvelles lois fiscales en France visent à faciliter la transmission patrimoniale et à réduire le taux d'imposition pour les revenus du capital. Il est recommandé de consulter un avocat fiscaliste pour obtenir des conseils personnalisés sur les donations et la transmission patrimoniale. Les exemples concrets ci-dessus peuvent aider les particuliers à comprendre les règles et les implications fiscales."
   },
   {
+    category: "Crypto",
     video_id: "Kym7PN7AJ3U",
     title: "BITCOIN BULLRUN 🚀 ETHEREUM DÉCOLLAGE 🔥",
     channel_name: "Enter The Crypto Matrix",

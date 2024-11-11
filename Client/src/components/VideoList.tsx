@@ -6,9 +6,10 @@ import { Pagination } from './Pagination';
 
 interface VideoListProps {
   videos: Video[];
+  selectedCategory: string;
 }
 
-export function VideoList({ videos }: VideoListProps) {
+export function VideoList({ videos, selectedCategory }: VideoListProps) {
   const [durationFilter, setDurationFilter] = useState('');
   const [dateFilter, setDateFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -18,13 +19,17 @@ export function VideoList({ videos }: VideoListProps) {
     return videos.filter(video => {
       let passesFilters = true;
 
+      // Filter by category
+      if (selectedCategory && selectedCategory !== 'All') {
+        passesFilters = passesFilters && video.category === selectedCategory;
+      }
+
       // Duration filter
       if (durationFilter) {
         const [min, max] = durationFilter.split('-').map(Number);
         if (max) {
           passesFilters = passesFilters && video.duration >= min && video.duration < max;
         } else {
-          // For "3600+" case
           passesFilters = passesFilters && video.duration >= min;
         }
       }
@@ -59,18 +64,16 @@ export function VideoList({ videos }: VideoListProps) {
 
       return passesFilters;
     });
-  }, [videos, durationFilter, dateFilter]);
+  }, [videos, selectedCategory, durationFilter, dateFilter]);
 
-  // Pagination calculations
   const totalPages = Math.ceil(filteredVideos.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentVideos = filteredVideos.slice(startIndex, endIndex);
 
-  // Reset to first page when filters or items per page change
   React.useEffect(() => {
     setCurrentPage(1);
-  }, [durationFilter, dateFilter, itemsPerPage]);
+  }, [selectedCategory, durationFilter, dateFilter, itemsPerPage]);
 
   return (
     <div className="space-y-8">

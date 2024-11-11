@@ -8,5 +8,6 @@ export interface Video {
   publish_date: string;
   has_subtitles: boolean;
   summary: string;
+  category: string;
   createdAt?: Date;
 }

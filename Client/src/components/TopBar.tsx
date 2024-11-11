@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Calendar, Filter } from 'lucide-react';
+import { Clock, Calendar } from 'lucide-react';
 
 interface TopBarProps {
   onDurationFilter: (duration: string) => void;

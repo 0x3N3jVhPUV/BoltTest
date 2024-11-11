@@ -9,8 +9,8 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
-  // Close sidebar by default on mobile
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 1024) {
@@ -18,10 +18,18 @@ export function Layout({ children }: LayoutProps) {
       }
     };
 
-    handleResize(); // Initial check
+    handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Clone children and pass selectedCategory as prop
+  const childrenWithProps = React.Children.map(children, child => {
+    if (React.isValidElement(child)) {
+      return React.cloneElement(child, { selectedCategory });
+    }
+    return child;
+  });
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -29,7 +37,11 @@ export function Layout({ children }: LayoutProps) {
         onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} 
         isSidebarOpen={isSidebarOpen}
       />
-      <Sidebar isOpen={isSidebarOpen} />
+      <Sidebar 
+        isOpen={isSidebarOpen}
+        onCategorySelect={setSelectedCategory}
+        selectedCategory={selectedCategory}
+      />
       
       <main className={`
         pt-16 transition-[padding] duration-300
@@ -37,7 +49,7 @@ export function Layout({ children }: LayoutProps) {
         min-h-[calc(100vh-4rem)]
       `}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {children}
+          {childrenWithProps}
         </div>
       </main>
 

@@ -7,7 +7,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-600 dark:text-gray-300">
-            © {new Date().getFullYear()} F.O.M.O. Killer. Tous droits réservés.
+            © {new Date().getFullYear()} F.O.M.O. Cure. Tous droits réservés.
           </p>
           <div className="flex items-center gap-4">
             <a
