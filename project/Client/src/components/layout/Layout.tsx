@@ -11,15 +11,15 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState('All');
   const [isMobile, setIsMobile] = useState(false);
   const [videos, setVideos] = useState<Video[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 1024;
       setIsMobile(mobile);
-      if (mobile && isSidebarOpen) {
+      if (mobile) {
         setIsSidebarOpen(false);
       }
     };
@@ -27,7 +27,7 @@ export function Layout({ children }: LayoutProps) {
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [isSidebarOpen]);
+  }, []);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -59,14 +59,6 @@ export function Layout({ children }: LayoutProps) {
     return videos.filter(video => video.category === theme).length;
   };
 
-  // Clone children and pass selectedCategory as prop
-  const childrenWithProps = React.Children.map(children, child => {
-    if (React.isValidElement(child)) {
-      return React.cloneElement(child, { selectedCategory });
-    }
-    return child;
-  });
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header 
@@ -87,7 +79,7 @@ export function Layout({ children }: LayoutProps) {
         min-h-[calc(100vh-4rem)]
       `}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {childrenWithProps}
+          {children}
         </div>
       </main>
 

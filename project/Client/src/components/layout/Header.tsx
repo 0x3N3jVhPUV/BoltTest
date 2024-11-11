@@ -30,7 +30,7 @@ export function Header({ onToggleSidebar, isSidebarOpen }: HeaderProps) {
         <div className="flex items-center gap-4">
           <button
             onClick={onToggleSidebar}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200 block"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200 lg:hidden"
             aria-label={isSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
           >
             <Menu className={`w-6 h-6 dark:text-gray-200 transition-transform duration-200 ${isSidebarOpen ? 'rotate-90' : ''}`} />
