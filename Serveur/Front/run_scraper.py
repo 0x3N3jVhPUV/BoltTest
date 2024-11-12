@@ -1,34 +1,43 @@
 import subprocess
-import json
 import os
 import sys  # Import sys to access sys.executable
 
-# Path to the channels.json file
-CHANNELS_FILE = 'channels.json'  # Adjust the path if necessary
-
-# Read the channels.json file to get the SLACK_CHANNEL name
-with open(CHANNELS_FILE, 'r') as f:
-    data = json.load(f)
-
-# Get the first key in the JSON data to use as SLACK_CHANNEL
-if len(data.keys()) == 1:
-    SLACK_CHANNEL = list(data.keys())[0]
-else:
-    # Handle the case where there are multiple keys
-    print("Multiple categories found in channels.json:", list(data.keys()))
-    SLACK_CHANNEL = input("Please enter the category to use as SLACK_CHANNEL: ")
-
-print(f"Using SLACK_CHANNEL: {SLACK_CHANNEL}")
+# Path to the channels directory
+CHANNELS_DIR = 'channels'  # Adjust the path if necessary
 
 # Construct the path to youtubescraping.py
 youtubescraping_path = os.path.join('..', 'Back', 'youtubescraping.py')
 
 # Use sys.executable to ensure the correct Python interpreter is used
-subprocess.run([
-    sys.executable,  # This ensures the virtual environment's Python is used
-    youtubescraping_path,
-    "--channels_file", CHANNELS_FILE,
-    "--slack_channel", SLACK_CHANNEL
-])
+python_executable = sys.executable
+
+# List to keep track of subprocesses
+processes = []
+
+# Iterate over each .json file in the channels directory
+for filename in os.listdir(CHANNELS_DIR):
+    if filename.endswith('.json'):
+        # Get the full path to the channels file
+        channels_file = os.path.join(CHANNELS_DIR, filename)
+
+        # Extract the category name from the filename (e.g., 'Ai.json' -> 'Ai')
+        category_name = os.path.splitext(filename)[0]
+
+        print(f"Processing category: {category_name}")
+
+        # Start the subprocess without waiting for it to finish
+        process = subprocess.Popen([
+            python_executable,  # Use the current Python interpreter
+            youtubescraping_path,
+            "--channels_file", channels_file,
+            "--slack_channel", category_name
+        ])
+
+        # Add the process to the list
+        processes.append(process)
 
 print(f"Using Python interpreter: {sys.executable}")
+
+# Optionally, wait for all subprocesses to finish
+for process in processes:
+    process.wait()

@@ -38,10 +38,11 @@ export function TopBar({ onDurationFilter, onDateFilter }: TopBarProps) {
             className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:text-white"
           >
             <option value="">Toutes les dates</option>
-            <option value="today">Aujourd'hui</option>
-            <option value="week">Cette semaine</option>
-            <option value="month">Ce mois</option>
-            <option value="year">Cette année</option>
+            <option value="1">Dernières 24 heures</option>
+            <option value="2">Derniers 2 jours</option>
+            <option value="3">Derniers 3 jours</option>
+            <option value="5">Derniers 5 jours</option>
+            <option value="7">Derniers 7 jours</option>
           </select>
         </div>
       </div>
