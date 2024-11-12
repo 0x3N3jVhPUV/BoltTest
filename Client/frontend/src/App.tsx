@@ -7,7 +7,7 @@ import { Video } from './types/video';
 //REACT_APP_API_BASE_URL="http://localhost:5000" 
 
 // Get the API base URL from environment variables
-const API_BASE_URL ="http://localhost:5000" || '';
+const API_BASE_URL ="http://0.0.0.0:5000/api/videos" || '';
 
 function App() {
   const [videos, setVideos] = useState<Video[]>([]);
