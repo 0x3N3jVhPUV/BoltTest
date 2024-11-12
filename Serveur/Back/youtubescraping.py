@@ -282,7 +282,7 @@ def post_to_slack(video, summary):
 def post_to_frontend(video_details):
     """Post video details to the React frontend."""
     # Determine the category based on the SLACK_CHANNEL
-    category = SLACK_CHANNEL
+    category = SLACK_CHANNEL.capitalize()
 
     # Construct the payload with the category
     payload = {

@@ -3,17 +3,17 @@ import { Header } from './Header';
 import { Sidebar } from './Sidebar';
 import { Footer } from './Footer';
 import { Video } from '../../types/video';
-import { VideoList } from '../VideoList';
 
 interface LayoutProps {
+  videos: Video[];
   children: React.ReactNode;
+  selectedCategory: string;
+  onCategorySelect: (category: string) => void;
 }
 
-export function Layout({ children }: LayoutProps) {
+export function Layout({ videos, children, selectedCategory, onCategorySelect }: LayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
-  const [videos, setVideos] = useState<Video[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState('All');
 
   useEffect(() => {
     const handleResize = () => {
@@ -33,30 +33,24 @@ export function Layout({ children }: LayoutProps) {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // Get videos from children
-  useEffect(() => {
-    const videoList = React.Children.toArray(children).find(
-      child => React.isValidElement(child) && child.type === VideoList
-    );
-    if (React.isValidElement(videoList)) {
-      setVideos(videoList.props.videos || []);
-    }
-  }, [children]);
-
   // Calculate video counts for each theme
   const getThemeCount = (theme: string, isFavorite: boolean = false) => {
     if (!videos) return 0;
     
-    if (theme === 'All') {
+    if (theme.toLowerCase() === 'all') {
       if (isFavorite) {
         return videos.filter(video => video.favorite_themes && video.favorite_themes.length > 0).length;
       }
       return videos.length;
     }
     if (isFavorite) {
-      return videos.filter(video => video.favorite_themes?.includes(theme)).length;
+      return videos.filter(video =>
+        video.favorite_themes?.some(favTheme => favTheme.toLowerCase() === theme.toLowerCase())
+      ).length;
     }
-    return videos.filter(video => video.category === theme).length;
+    return videos.filter(video =>
+      video.category && video.category.toLowerCase() === theme.toLowerCase()
+    ).length;
   };
 
   return (
@@ -67,7 +61,7 @@ export function Layout({ children }: LayoutProps) {
       />
       <Sidebar 
         isOpen={isSidebarOpen}
-        onCategorySelect={setSelectedCategory}
+        onCategorySelect={onCategorySelect}
         selectedCategory={selectedCategory}
         onClose={() => isMobile && setIsSidebarOpen(false)}
         getThemeCount={getThemeCount}

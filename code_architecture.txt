@@ -1,0 +1,1054 @@
+├── Client
+    ├── backend
+    │   ├── .env
+    │   ├── package.json
+    │   └── server.js
+    ├── frontend
+    │   ├── Client
+    │   │   └── .bolt
+    │   │   │   ├── config.json
+    │   │   │   └── prompt
+    │   ├── index.html
+    │   ├── package.json
+    │   ├── postcss.config.js
+    │   ├── src
+    │   │   ├── App.tsx
+    │   │   ├── components
+    │   │   │   ├── FavoriteModal.tsx
+    │   │   │   ├── Pagination.tsx
+    │   │   │   ├── ShareButtons.tsx
+    │   │   │   ├── TopBar.tsx
+    │   │   │   ├── VideoCard.tsx
+    │   │   │   ├── VideoList.tsx
+    │   │   │   └── layout
+    │   │   │   │   ├── Footer.tsx
+    │   │   │   │   ├── Header.tsx
+    │   │   │   │   ├── Layout.tsx
+    │   │   │   │   └── Sidebar.tsx
+    │   │   ├── data
+    │   │   │   └── mockData.ts
+    │   │   ├── hooks
+    │   │   │   └── useDarkMode.ts
+    │   │   ├── index.css
+    │   │   ├── main.tsx
+    │   │   └── types
+    │   │   │   └── video.ts
+    │   ├── tailwind.config.js
+    │   ├── tsconfig.json
+    │   ├── tsconfig.node.json
+    │   └── vite.config.ts
+    └── package-lock.json
+└── Serveur
+    ├── .env
+    ├── Back
+        └── youtubescraping.py
+    └── Front
+        ├── channels.json
+        └── run_scraper.py
+
+
+/Client/backend/.env:
+----------------------------------------------------------------------------------------------------
+PORT=5173
+FRONTEND_URL=http://localhost:3000
+
+
+
+----------------------------------------------------------------------------------------------------
+/Client/backend/package.json:
+----------------------------------------------------------------------------------------------------
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "votre-projet": "file:.."
+  },
+  "proxy": "http://localhost:5173"
+}
+
+
+
+----------------------------------------------------------------------------------------------------
+/Client/backend/server.js:
+----------------------------------------------------------------------------------------------------
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
+const app = express();
+const port = process.env.PORT || 5000;
+
+app.use(express.json());
+app.use(cors());
+
+// Array to store video data
+let videoData = [];
+
+// Endpoint to receive video details
+app.post('/api/videos', (req, res) => {
+  const videoDetails = req.body;
+  videoData.push(videoDetails); // Store the received video details
+  console.log('Received video details:', videoDetails);
+  res.status(200).send('Video details received');
+});
+
+// Add this endpoint to serve video data
+app.get('/api/videos', (req, res) => {
+  res.json(videoData);
+});
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, '../frontend')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend', 'index.html'));
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
+
+
+
+
+----------------------------------------------------------------------------------------------------
+/Client/frontend/Client/.bolt/config.json:
+----------------------------------------------------------------------------------------------------
+{
+  "template": "bolt-vite-react-ts"
+}
+
+
+
+----------------------------------------------------------------------------------------------------
+/Client/frontend/Client/.bolt/prompt:
+----------------------------------------------------------------------------------------------------
+For all designs I ask you to make, have them be beautiful, not cookie cutter. Make webpages that are fully featured and worthy for production.
+
+By default, this template supports JSX syntax with Tailwind CSS classes, React hooks, and Lucide React for icons. Do not install other packages for UI themes, icons, etc unless absolutely necessary or I request them.
+
+Use icons from lucide-react for logos.
+
+Use stock photos from unsplash where appropriate, only valid URLs you know exist. Do not download the images, only link to them in image tags.
+
+
+
+
+----------------------------------------------------------------------------------------------------
+/Client/frontend/index.html:
+----------------------------------------------------------------------------------------------------
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>F.O.M.O. Cure</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
+
+
+----------------------------------------------------------------------------------------------------
+/Client/frontend/package.json:
+----------------------------------------------------------------------------------------------------
+{
+  "name": "video-summary-viewer",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "lucide-react": "^0.344.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.1",
+    "@tailwindcss/typography": "^0.5.10",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.18",
+    "eslint": "^9.9.1",
+    "eslint-plugin-react-hooks": "^5.1.0-rc.0",
+    "eslint-plugin-react-refresh": "^0.4.11",
+    "globals": "^15.9.0",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.5.3",
+    "typescript-eslint": "^8.3.0",
+    "vite": "^5.4.2"
+  }
+}
+
+
+----------------------------------------------------------------------------------------------------
+/Client/frontend/postcss.config.js:
+----------------------------------------------------------------------------------------------------
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+
+
+----------------------------------------------------------------------------------------------------
+/Client/frontend/src/App.tsx:
+----------------------------------------------------------------------------------------------------
+import React, { useState } from 'react';
+import { Layout } from './components/layout/Layout';
+import { VideoList } from './components/VideoList';
+import { mockVideos } from './data/mockData';
+import { Video } from './types/video';
+
+function App() {
+  const [videos, setVideos] = useState<Video[]>(mockVideos);
+  const [favoriteThemes, setFavoriteThemes] = useState<string[]>([]);
+
+  const handleAddToFavorites = (videoId: string, theme: string) => {
+    setVideos(prevVideos => 
+      prevVideos.map(video => {
+        if (video.video_id === videoId) {
+          const currentThemes = video.favorite_themes || [];
+          if (!currentThemes.includes(theme)) {
+            return {
+              ...video,
+              favorite_themes: [...currentThemes, theme]
+            };
+          }
+        }
+        return video;
+      })
+    );
+  };
+
+  const handleAddFavoriteTheme = (theme: string) => {
+    if (!favoriteThemes.includes(theme)) {
+      setFavoriteThemes(prev => [...prev, theme]);
+    }
+  };
+
+  const handleRemoveFavoriteTheme = (theme: string) => {
+    setFavoriteThemes(prev => prev.filter(t => t !== theme));
+    setVideos(prevVideos =>
+      prevVideos.map(video => ({
+        ...video,
+        favorite_themes: video.favorite_themes?.filter(t => t !== theme)
+      }))
+    );
+  };
+
+  return (
+    <Layout
+      favoriteThemes={favoriteThemes}
+      onAddFavoriteTheme={handleAddFavoriteTheme}
+      onRemoveFavoriteTheme={handleRemoveFavoriteTheme}
+    >
+      <VideoList 
+        videos={videos}
+        favoriteThemes={favoriteThemes}
+        onAddToFavorites={handleAddToFavorites}
+        onAddFavoriteTheme={handleAddFavoriteTheme}
+      />
+    </Layout>
+  );
+}
+
+export default App;
+
+
+----------------------------------------------------------------------------------------------------
+/Client/frontend/src/components/FavoriteModal.tsx:
+----------------------------------------------------------------------------------------------------
+/Client/frontend/src/components/Pagination.tsx:
+----------------------------------------------------------------------------------------------------
+import React from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+
+interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  itemsPerPage: number;
+  onPageChange: (page: number) => void;
+  onItemsPerPageChange: (itemsPerPage: number) => void;
+}
+
+export function Pagination({
+  currentPage,
+  totalPages,
+  itemsPerPage,
+  onPageChange,
+  onItemsPerPageChange,
+}: PaginationProps) {
+  const itemsPerPageOptions = [5, 10, 15, 20];
+
+  return (
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+      <div className="flex items-center gap-2">
+        <label className="text-sm text-gray-600 dark:text-gray-300">
+          Videos par page:
+        </label>
+        <select
+          value={itemsPerPage}
+          onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
+          className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:text-white text-sm"
+        >
+          {itemsPerPageOptions.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="p-2 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700"
+        >
+          <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+        </button>
+
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          <button
+            key={page}
+            onClick={() => onPageChange(page)}
+            className={`
+              min-w-[2rem] h-8 rounded-lg text-sm font-medium transition-colors duration-200
+              ${currentPage === page
+                ? 'bg-blue-600 text-white'
+                : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+              }
+            `}
+          >
+            {page}
+          </button>
+        ))}
+
+        <button
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="p-2 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700"
+        >
+          <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+
+----------------------------------------------------------------------------------------------------
+/Client/frontend/src/components/ShareButtons.tsx:
+----------------------------------------------------------------------------------------------------
+/Client/frontend/src/components/TopBar.tsx:
+----------------------------------------------------------------------------------------------------
+/Client/frontend/src/components/VideoCard.tsx:
+----------------------------------------------------------------------------------------------------
+import React, { useState, useRef } from 'react';
+import { Video } from '../types/video';
+import { Play, Clock, Calendar, Subtitles, ChevronDown, ChevronUp, Volume2, VolumeX, Maximize2, Minimize2, Star } from 'lucide-react';
+import { ShareButtons } from './ShareButtons';
+import { FavoriteModal } from './FavoriteModal';
+
+interface VideoCardProps {
+  video: Video;
+  onAddToFavorites: (videoId: string, theme: string) => void;
+  favoriteThemes: string[];
+  onAddFavoriteTheme: (theme: string) => void;
+}
+
+export function VideoCard({ video, onAddToFavorites, favoriteThemes, onAddFavoriteTheme }: VideoCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isWatchingVideo, setIsWatchingVideo] = useState(false);
+  const [showFavoriteModal, setShowFavoriteModal] = useState(false);
+  const speechSynthRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+  const formatDuration = (seconds: number): string => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+    
+    if (hours > 0) {
+      return `${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
+  const formatDate = (dateString: string): string => {
+    const year = dateString.substring(0, 4);
+    const month = dateString.substring(4, 6);
+    const day = dateString.substring(6, 8);
+    return new Date(`${year}-${month}-${day}`).toLocaleDateString('fr-FR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  const stripHtml = (html: string) => {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || '';
+  };
+
+  const detectLanguage = (text: string): 'fr-FR' | 'en-US' => {
+    const frenchWords = ['et', 'est', 'sont', 'dans', 'pour', 'avec', 'sur', 'les', 'des'];
+    const textWords = text.toLowerCase().split(/\s+/);
+    const frenchWordCount = textWords.filter(word => frenchWords.includes(word)).length;
+    return frenchWordCount > 2 ? 'fr-FR' : 'en-US';
+  };
+
+  const handleTTS = () => {
+    if (isPlaying) {
+      window.speechSynthesis.cancel();
+      setIsPlaying(false);
+      return;
+    }
+
+    const cleanText = stripHtml(video.summary);
+    const language = detectLanguage(cleanText);
+
+    speechSynthRef.current = new SpeechSynthesisUtterance(cleanText);
+    speechSynthRef.current.lang = language;
+    speechSynthRef.current.onend = () => setIsPlaying(false);
+    speechSynthRef.current.onerror = () => setIsPlaying(false);
+
+    window.speechSynthesis.speak(speechSynthRef.current);
+    setIsPlaying(true);
+  };
+
+  const toggleVideo = () => {
+    setIsWatchingVideo(!isWatchingVideo);
+    if (isPlaying) {
+      handleTTS();
+    }
+  };
+
+  const getChannelUrl = () => {
+    const videoUrl = new URL(video.video_link);
+    return `https://www.youtube.com/channel/${videoUrl.searchParams.get('v')}`;
+  };
+
+  React.useEffect(() => {
+    return () => {
+      if (isPlaying) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, [isPlaying]);
+
+  return (
+    <>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+        <div className="relative aspect-video">
+          {isWatchingVideo ? (
+            <div className="relative w-full h-full">
+              <iframe
+                src={`https://www.youtube.com/embed/${video.video_id}?autoplay=1`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="absolute inset-0 w-full h-full"
+              />
+              <button
+                onClick={toggleVideo}
+                className="absolute top-4 right-4 p-2 bg-black bg-opacity-50 hover:bg-opacity-70 rounded-lg text-white transition-colors z-10"
+              >
+                <Minimize2 className="w-5 h-5" />
+              </button>
+            </div>
+          ) : (
+            <>
+              <img
+                src={`https://img.youtube.com/vi/${video.video_id}/maxresdefault.jpg`}
+                alt={video.title}
+                className="w-full h-full object-cover"
+              />
+              <button
+                onClick={toggleVideo}
+                className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-200 group"
+              >
+                <div className="transform transition-transform duration-200 group-hover:scale-110">
+                  <Play className="w-16 h-16 text-white" />
+                </div>
+              </button>
+            </>
+          )}
+        </div>
+        
+        <div className="p-6">
+          <div className="flex justify-between items-start gap-4 mb-3">
+            <a
+              href={video.video_link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xl font-semibold text-gray-800 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            >
+              {video.title}
+            </a>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleTTS}
+                className={`flex-shrink-0 p-2 rounded-lg transition-colors duration-200 ${
+                  isPlaying 
+                    ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400' 
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300'
+                }`}
+                aria-label={isPlaying ? 'Stop reading' : 'Read summary'}
+              >
+                {isPlaying ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+              </button>
+              <button
+                onClick={() => setShowFavoriteModal(true)}
+                className="flex-shrink-0 p-2 rounded-lg transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300"
+                aria-label="Add to favorites"
+              >
+                <Star className={`w-5 h-5 ${video.favorite_themes?.length ? 'text-yellow-500 fill-yellow-500' : ''}`} />
+              </button>
+            </div>
+          </div>
+
+          <div className="flex justify-between items-center mb-4">
+            <a
+              href={getChannelUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 dark:text-blue-400 text-base hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+            >
+              {video.channel_name}
+            </a>
+            
+            <ShareButtons url={video.video_link} title={video.title} />
+          </div>
+          
+          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-300 mb-6">
+            <div className="flex items-center gap-1">
+              <Clock className="w-4 h-4" />
+              <span>{formatDuration(video.duration)}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Calendar className="w-4 h-4" />
+              <span>{formatDate(video.publish_date)}</span>
+            </div>
+            {video.has_subtitles && (
+              <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
+                <Subtitles className="w-4 h-4" />
+                <span>Sous-titres disponibles</span>
+              </div>
+            )}
+          </div>
+
+          <div className={`prose prose-sm dark:prose-invert max-w-none overflow-hidden transition-[max-height] duration-300 ease-in-out ${isExpanded ? 'max-h-[5000px]' : 'max-h-[150px]'}`}>
+            <div dangerouslySetInnerHTML={{ __html: video.summary }} />
+          </div>
+
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="mt-4 w-full flex items-center justify-center gap-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200"
+          >
+            {isExpanded ? (
+              <>
+                Voir moins
+                <ChevronUp className="w-4 h-4" />
+              </>
+            ) : (
+              <>
+                Voir plus
+                <ChevronDown className="w-4 h-4" />
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
+      <FavoriteModal
+        isOpen={showFavoriteModal}
+        onClose={() => setShowFavoriteModal(false)}
+        onSave={(theme) => {
+          onAddToFavorites(video.video_id, theme);
+          setShowFavoriteModal(false);
+        }}
+        favoriteThemes={favoriteThemes}
+        onAddTheme={onAddFavoriteTheme}
+      />
+    </>
+  );
+}
+
+
+----------------------------------------------------------------------------------------------------
+/Client/frontend/src/components/VideoList.tsx:
+----------------------------------------------------------------------------------------------------
+import React, { useState, useMemo } from 'react';
+import { Video } from '../types/video';
+import { VideoCard } from './VideoCard';
+import { TopBar } from './TopBar';
+import { Pagination } from './Pagination';
+
+interface VideoListProps {
+  videos: Video[];
+  selectedCategory: string;
+  favoriteThemes: string[];
+  onAddToFavorites: (videoId: string, theme: string) => void;
+  onAddFavoriteTheme: (theme: string) => void;
+}
+
+export function VideoList({ 
+  videos, 
+  selectedCategory,
+  favoriteThemes,
+  onAddToFavorites,
+  onAddFavoriteTheme 
+}: VideoListProps) {
+  const [durationFilter, setDurationFilter] = useState('');
+  const [dateFilter, setDateFilter] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const filteredVideos = useMemo(() => {
+    return videos.filter(video => {
+      let passesFilters = true;
+
+      // Filter by category
+      if (selectedCategory && selectedCategory !== 'All') {
+        if (favoriteThemes.includes(selectedCategory)) {
+          passesFilters = passesFilters && video.favorite_themes?.includes(selectedCategory);
+        } else {
+          passesFilters = passesFilters && video.category === selectedCategory;
+        }
+      }
+
+      // Duration filter
+      if (durationFilter) {
+        const [min, max] = durationFilter.split('-').map(Number);
+        if (max) {
+          passesFilters = passesFilters && video.duration >= min && video.duration < max;
+        } else {
+          passesFilters = passesFilters && video.duration >= min;
+        }
+      }
+
+      // Date filter
+      if (dateFilter) {
+        const publishDate = new Date(
+          video.publish_date.substring(0, 4),
+          parseInt(video.publish_date.substring(4, 6)) - 1,
+          video.publish_date.substring(6, 8)
+        );
+        const now = new Date();
+        
+        switch (dateFilter) {
+          case 'today':
+            passesFilters = passesFilters && publishDate.toDateString() === now.toDateString();
+            break;
+          case 'week':
+            const weekAgo = new Date(now.setDate(now.getDate() - 7));
+            passesFilters = passesFilters && publishDate >= weekAgo;
+            break;
+          case 'month':
+            passesFilters = passesFilters && 
+              publishDate.getMonth() === now.getMonth() &&
+              publishDate.getFullYear() === now.getFullYear();
+            break;
+          case 'year':
+            passesFilters = passesFilters && publishDate.getFullYear() === now.getFullYear();
+            break;
+        }
+      }
+
+      return passesFilters;
+    });
+  }, [videos, selectedCategory, durationFilter, dateFilter, favoriteThemes]);
+
+  const totalPages = Math.ceil(filteredVideos.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentVideos = filteredVideos.slice(startIndex, endIndex);
+
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, durationFilter, dateFilter, itemsPerPage]);
+
+  return (
+    <div className="space-y-8">
+      <TopBar
+        onDurationFilter={setDurationFilter}
+        onDateFilter={setDateFilter}
+      />
+      
+      {currentVideos.map((video, index) => (
+        <VideoCard 
+          key={video.id || index} 
+          video={video}
+          onAddToFavorites={onAddToFavorites}
+          favoriteThemes={favoriteThemes}
+          onAddFavoriteTheme={onAddFavoriteTheme}
+        />
+      ))}
+
+      {filteredVideos.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          itemsPerPage={itemsPerPage}
+          onPageChange={setCurrentPage}
+          onItemsPerPageChange={setItemsPerPage}
+        />
+      )}
+    </div>
+  );
+}
+
+
+----------------------------------------------------------------------------------------------------
+/Client/frontend/src/components/layout/Footer.tsx:
+----------------------------------------------------------------------------------------------------
+/Client/frontend/src/components/layout/Header.tsx:
+----------------------------------------------------------------------------------------------------
+/Client/frontend/src/components/layout/Layout.tsx:
+----------------------------------------------------------------------------------------------------
+import React, { useState, useEffect } from 'react';
+import { Header } from './Header';
+import { Sidebar } from './Sidebar';
+import { Footer } from './Footer';
+import { Video } from '../../types/video';
+import { VideoList } from '../VideoList';
+
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
+export function Layout({ children }: LayoutProps) {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState('All');
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 1024;
+      setIsMobile(mobile);
+      if (mobile) {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  // Get videos from children
+  useEffect(() => {
+    const videoList = React.Children.toArray(children).find(
+      child => React.isValidElement(child) && child.type === VideoList
+    );
+    if (React.isValidElement(videoList)) {
+      setVideos(videoList.props.videos || []);
+    }
+  }, [children]);
+
+  // Calculate video counts for each theme
+  const getThemeCount = (theme: string, isFavorite: boolean = false) => {
+    if (!videos) return 0;
+    
+    if (theme === 'All') {
+      if (isFavorite) {
+        return videos.filter(video => video.favorite_themes && video.favorite_themes.length > 0).length;
+      }
+      return videos.length;
+    }
+    if (isFavorite) {
+      return videos.filter(video => video.favorite_themes?.includes(theme)).length;
+    }
+    return videos.filter(video => video.category === theme).length;
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <Header 
+        onToggleSidebar={toggleSidebar} 
+        isSidebarOpen={isSidebarOpen}
+      />
+      <Sidebar 
+        isOpen={isSidebarOpen}
+        onCategorySelect={setSelectedCategory}
+        selectedCategory={selectedCategory}
+        onClose={() => isMobile && setIsSidebarOpen(false)}
+        getThemeCount={getThemeCount}
+      />
+      
+      <main className={`
+        pt-16 transition-[padding] duration-300
+        ${isSidebarOpen && !isMobile ? 'lg:pl-64' : 'lg:pl-0'}
+        min-h-[calc(100vh-4rem)]
+      `}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {children}
+        </div>
+      </main>
+
+      <div className={`
+        transition-[padding] duration-300
+        ${isSidebarOpen && !isMobile ? 'lg:pl-64' : 'lg:pl-0'}
+      `}>
+        <Footer />
+      </div>
+    </div>
+  );
+}
+
+
+----------------------------------------------------------------------------------------------------
+/Client/frontend/src/components/layout/Sidebar.tsx:
+----------------------------------------------------------------------------------------------------
+/Client/frontend/src/data/mockData.ts:
+----------------------------------------------------------------------------------------------------
+/Client/frontend/src/hooks/useDarkMode.ts:
+----------------------------------------------------------------------------------------------------
+import { useState, useEffect } from 'react';
+
+export function useDarkMode() {
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem('darkMode');
+    return saved ? JSON.parse(saved) : window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (isDark) {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('darkMode', JSON.stringify(isDark));
+  }, [isDark]);
+
+  return [isDark, setIsDark] as const;
+}
+
+
+----------------------------------------------------------------------------------------------------
+/Client/frontend/src/index.css:
+----------------------------------------------------------------------------------------------------
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+----------------------------------------------------------------------------------------------------
+/Client/frontend/src/main.tsx:
+----------------------------------------------------------------------------------------------------
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import App from './App'
+import './index.css'
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+
+
+----------------------------------------------------------------------------------------------------
+/Client/frontend/src/types/video.ts:
+----------------------------------------------------------------------------------------------------
+export interface Video {
+  id?: string;
+  video_id: string;
+  title: string;
+  channel_name: string;
+  video_link: string;
+  duration: number;
+  publish_date: string;
+  has_subtitles: boolean;
+  summary: string;
+  category: string;
+  createdAt?: Date;
+  favorite_themes?: string[];
+}
+
+
+----------------------------------------------------------------------------------------------------
+/Client/frontend/tailwind.config.js:
+----------------------------------------------------------------------------------------------------
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  darkMode: 'class',
+  theme: {
+    extend: {},
+  },
+  plugins: [
+    require('@tailwindcss/typography'),
+  ],
+}
+
+
+----------------------------------------------------------------------------------------------------
+/Client/frontend/tsconfig.json:
+----------------------------------------------------------------------------------------------------
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
+
+
+----------------------------------------------------------------------------------------------------
+/Client/frontend/tsconfig.node.json:
+----------------------------------------------------------------------------------------------------
+{
+  "compilerOptions": {
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["vite.config.ts"]
+}
+
+
+----------------------------------------------------------------------------------------------------
+/Client/frontend/vite.config.ts:
+----------------------------------------------------------------------------------------------------
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    proxy: {
+      '/api': 'http://localhost:5000'
+    }
+  }
+})
+
+
+----------------------------------------------------------------------------------------------------
+/Client/package-lock.json:
+----------------------------------------------------------------------------------------------------
+{
+  "name": "project",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {}
+}
+
+
+
+----------------------------------------------------------------------------------------------------
+/Serveur/.env:
+----------------------------------------------------------------------------------------------------
+SLACK_TOKEN="xoxp-7026449970582-7030167026485-7499541108291-29c9cf5564620847c620548c1d63f056"
+SLACK_TOKEN_BOT="xoxb-7026449970582-7485095886903-W3B5TtKSk3fypEC3bsRIHG9r"
+GENAI_API_KEY=AIzaSyDgsMkXDExxoXGaTx6FG81ry1BCjs0gd9c
+TOGETHER_API_KEY=8d65690b9dc681c8b19db728669ac14a29f43fe3993525c49b90ae234c33b706
+APIFY_API_TOKEN=apify_api_WQBpG6gR7MOE6u4O0R8vAmzLOg5ouj0QRkOF
+
+# Useful commands:
+# nvidia-smi
+# pip install -r requirements.txt
+# python3 -m venv my_env
+
+
+----------------------------------------------------------------------------------------------------
+/Serveur/Back/youtubescraping.py:
+----------------------------------------------------------------------------------------------------
+/Serveur/Front/channels.json:
+----------------------------------------------------------------------------------------------------
+{
+    "Crypto": [
+      "UCftxsv8P_Hz32KJuiVQ_0Wg",
+      "UCLYkmHwquAiRxOi70HINajA",
+      "UCgVwEevnx3axN6EJWgKI4gg",
+      "UC5irSAibfE6Ads_ReDFrffA",
+      "UCDsVC_ewpcEW_AQcO-H-RDQ"
+    ]
+  }
+
+
+----------------------------------------------------------------------------------------------------
+/Serveur/Front/run_scraper.py:
+----------------------------------------------------------------------------------------------------
+import subprocess
+import json
+import os
+import sys  # Import sys to access sys.executable
+
+# Path to the channels.json file
+CHANNELS_FILE = 'channels.json'  # Adjust the path if necessary
+
+# Read the channels.json file to get the SLACK_CHANNEL name
+with open(CHANNELS_FILE, 'r') as f:
+    data = json.load(f)
+
+# Get the first key in the JSON data to use as SLACK_CHANNEL
+if len(data.keys()) == 1:
+    SLACK_CHANNEL = list(data.keys())[0]
+else:
+    # Handle the case where there are multiple keys
+    print("Multiple categories found in channels.json:", list(data.keys()))
+    SLACK_CHANNEL = input("Please enter the category to use as SLACK_CHANNEL: ")
+
+print(f"Using SLACK_CHANNEL: {SLACK_CHANNEL}")
+
+# Construct the path to youtubescraping.py
+youtubescraping_path = os.path.join('..', 'Back', 'youtubescraping.py')
+
+# Use sys.executable to ensure the correct Python interpreter is used
+subprocess.run([
+    sys.executable,  # This ensures the virtual environment's Python is used
+    youtubescraping_path,
+    "--channels_file", CHANNELS_FILE,
+    "--slack_channel", SLACK_CHANNEL
+])
+
+print(f"Using Python interpreter: {sys.executable}")

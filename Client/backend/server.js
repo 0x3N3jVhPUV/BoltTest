@@ -13,21 +13,21 @@ let videoData = [];
 // Endpoint to receive video details
 app.post('/api/videos', (req, res) => {
   const videoDetails = req.body;
+
+  // Ensure the category field is present
+  const category = videoDetails.category;
+  if (!category) {
+    return res.status(400).send('Category is required');
+  }
+
   videoData.push(videoDetails); // Store the received video details
   console.log('Received video details:', videoDetails);
   res.status(200).send('Video details received');
 });
 
-// Add this endpoint to serve video data
+// Endpoint to retrieve video data
 app.get('/api/videos', (req, res) => {
   res.json(videoData);
-});
-
-// Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../frontend')));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend', 'index.html'));
 });
 
 app.listen(port, () => {

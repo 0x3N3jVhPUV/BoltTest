@@ -180,6 +180,16 @@ export function Sidebar({ isOpen, onCategorySelect, selectedCategory, onClose, g
   });
   const [themes, setThemes] = useState<ThemeItem[]>(defaultThemes);
 
+  // Définition de la fonction deleteTheme
+  function deleteTheme(items: ThemeItem[]): ThemeItem[] {
+    return items
+      .filter(item => item.label !== deleteModal.theme)
+      .map(item => ({
+        ...item,
+        children: item.children ? deleteTheme(item.children) : undefined
+      }));
+  }
+
   const toggleExpand = (label: string) => {
     setExpandedItems(prev => 
       prev.includes(label)
@@ -205,22 +215,7 @@ export function Sidebar({ isOpen, onCategorySelect, selectedCategory, onClose, g
   };
 
   const handleDeleteConfirm = () => {
-    const deleteTheme = (items: ThemeItem[]): ThemeItem[] => {
-      return items.map(item => ({
-        ...item,
-        children: item.children
-          ? item.children
-              .map(child => ({
-                ...child,
-                children: child.children
-                  ? child.children.filter(grandChild => grandChild.label !== deleteModal.theme)
-                  : undefined
-              }))
-          : undefined
-      }));
-    };
-
-    setThemes(deleteTheme);
+    setThemes(prevThemes => deleteTheme(prevThemes));
     setDeleteModal({ isOpen: false, theme: '' });
   };
 
@@ -273,7 +268,7 @@ export function Sidebar({ isOpen, onCategorySelect, selectedCategory, onClose, g
     const isExpanded = expandedItems.includes(item.label);
     const Icon = item.icon;
     const isSelected = item.label === selectedCategory;
-    const canDelete = !item.permanent && !item.disabled && depth === 3;
+    const canDelete = !item.permanent && !item.disabled && depth >= 3;
     const canAddThemes = (item.label === 'Thèmes' || item.label === 'Favoris') && depth === 2;
     const currentPath = [...parentPath, item.label];
     const isFavorites = currentPath.includes('Favoris');
@@ -333,7 +328,7 @@ export function Sidebar({ isOpen, onCategorySelect, selectedCategory, onClose, g
         </div>
         {hasChildren && isExpanded && (
           <ul className="mt-1">
-            {item.children.map(child => renderThemeItem(child, depth + 1, currentPath))}
+            {item.children?.map(child => renderThemeItem(child, depth + 1, currentPath))}
           </ul>
         )}
       </li>
