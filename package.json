@@ -2,13 +2,10 @@
     "name": "myproject",
     "version": "1.0.0",
     "scripts": {
-<<<<<<< HEAD
         "dev": "vite",
         "build": "NODE_ENV=production vite build",
         "serve": "vite preview",
-=======
->>>>>>> 9fe5e93d7691fc730f4ec31494a3bbf42ae7cdd2
-        "start": "concurrently \"cd Client/frontend && npm install && npm run build\" \"cd Client/backend && npm install && node server.js\" \"cd Serveur && pip install -r requirements.txt && cd Front && python run_scraper.py\""
+        "start": "concurrently \"cd Client/frontend && npm install && npm run build\" \"cd Client/backend && npm install && npm run start:prod\" \"cd Serveur && pip install -r requirements.txt && cd Front && python run_scraper.py\""
     },
     "devDependencies": {
         "concurrently": "^7.6.0"

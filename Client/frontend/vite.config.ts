@@ -8,7 +8,6 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-<<<<<<< HEAD
       '/api': isProduction ? 'https://your-production-api-url.com' : 'http://localhost:5000'
     }
   },
@@ -18,12 +17,3 @@ export default defineConfig({
     sourcemap: !isProduction, // Generate sourcemaps only in development
   }
 })
-=======
-      '/api': 'http://localhost:5000',
-    },
-  },
-  build: {
-    outDir: 'dist', 
-  },
-});
->>>>>>> 9fe5e93d7691fc730f4ec31494a3bbf42ae7cdd2

@@ -7,6 +7,15 @@ const port = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cors());
 
+// Serve static files from the frontend build directory in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../frontend/dist', 'index.html'));
+  });
+}
+
 // Array to store video data
 let videoData = [];
 

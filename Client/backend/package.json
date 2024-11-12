@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "start:prod": "cross-env NODE_ENV=production node server.js"
   },
   "keywords": [],
   "author": "",
@@ -15,5 +16,8 @@
     "express": "^4.21.1",
     "votre-projet": "file:.."
   },
-  "proxy": "http://localhost:5173"
+  "proxy": "http://localhost:5173",
+  "devDependencies": {
+    "cross-env": "^7.0.3"
+  }
 }
