@@ -297,7 +297,11 @@ def post_to_frontend(video_details):
         "summary": video_details['summary']
     }
 
-    url = "http://localhost:5000/api/videos"  # Adjust the endpoint as needed
+    #url = "http://localhost:5000/api/videos"  # Adjust the endpoint as needed
+    #url = "https://your-production-api-url.com/api/videos"  # Adjust the endpoint as needed
+    # Use the actual production API URL
+    url = os.environ.get("http://0.0.0.0:5000", "http://localhost:5000/api/videos")  # Fallback to localhost for development
+
     try:
         response = requests.post(url, json=payload)
         print(f"Response ======= {response}")

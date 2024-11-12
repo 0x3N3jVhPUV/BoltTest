@@ -3,9 +3,12 @@ const cors = require('cors');
 const path = require('path');
 const app = express();
 const port = process.env.PORT || 5000;
+const host = '0.0.0.0'; // Replit uses 0.0.0.0 to listen on all interfaces
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || '*', // Replace '*' with your frontend's domain in production
+}));
 
 // Serve static files from the frontend build directory in production
 if (process.env.NODE_ENV === 'production') {
@@ -39,7 +42,7 @@ app.get('/api/videos', (req, res) => {
   res.json(videoData);
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+app.listen(port, host, () => {
+  console.log(`Server is running on http://${host}:${port}`);
 });
 
