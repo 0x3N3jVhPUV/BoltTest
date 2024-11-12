@@ -1,0 +1,12 @@
+{
+    "name": "myproject",
+    "version": "1.0.0",
+    "scripts": {
+        "start": "concurrently \"cd Client/frontend && npm install && npm run dev\" \"cd Client/backend && npm install && node server.js\" \"cd Serveur && pip install -r requirements.txt && cd Front && python run_scraper.py\""
+    },
+    "devDependencies": {
+        "concurrently": "^7.6.0"
+    }
+}
+
+
