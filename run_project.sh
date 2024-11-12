@@ -11,7 +11,7 @@ start_frontend() {
   echo "Démarrage du front-end..."
   cd Client/frontend/
   npm install
-  npm run dev &
+  npm run build &
   cd ../../
 }
 
