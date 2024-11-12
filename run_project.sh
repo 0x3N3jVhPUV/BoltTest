@@ -63,7 +63,6 @@ echo "Tous les services ont été démarrés."
 #   chmod +x run_project.sh
 #    ./run_project.sh
 
-
 # commande pour lancer le projet en mode dev
 #"start": "concurrently \"cd Client/frontend && npm install && npm run dev\" \"cd Client/backend && npm install && node server.js\" \"cd Serveur && pip install -r requirements.txt && cd Front && python run_scraper.py\"",
 
